@@ -91,25 +91,6 @@ contract StakingApp is Ownable {
         }
     }
 
-    function _distributeFees() internal {
-        uint256 totalFees = accumulatedFees;
-        uint256 feePerStaker = totalFees / activeStakers.length();
-        uint256 remainingFees = totalFees;
-        
-        for (uint256 i = 0; i < activeStakers.length(); i++) {
-            address staker = activeStakers.at(i);
-            uint256 feeShare = (i == activeStakers.length() - 1) ? remainingFees : feePerStaker;
-            
-            userBalance[staker] += feeShare;
-            receiptToken.mint(staker, feeShare);
-            
-            remainingFees -= feeShare;
-        }
-        
-        accumulatedFees = 0;
-        emit FeesDistributed(totalFees, activeStakers.length());
-    }
-
     function claimRewards() external {
         require(userBalance[msg.sender] == fixedStackingAmount, "You have no deposit to claim rewards for");
 
@@ -143,5 +124,23 @@ contract StakingApp is Ownable {
 
     function isActiveStaker(address user) external view returns (bool) {
         return activeStakers.contains(user);
+    }
+    function _distributeFees() internal {
+        uint256 totalFees = accumulatedFees;
+        uint256 feePerStaker = totalFees / activeStakers.length();
+        uint256 remainingFees = totalFees;
+        
+        for (uint256 i = 0; i < activeStakers.length(); i++) {
+            address staker = activeStakers.at(i);
+            uint256 feeShare = (i == activeStakers.length() - 1) ? remainingFees : feePerStaker;
+            
+            userBalance[staker] += feeShare;
+            receiptToken.mint(staker, feeShare);
+            
+            remainingFees -= feeShare;
+        }
+        
+        accumulatedFees = 0;
+        emit FeesDistributed(totalFees, activeStakers.length());
     }
 }
