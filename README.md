@@ -15,6 +15,14 @@
 
 ---
 
+## 🖉 Diagrama de Flujo del Contrato
+
+Este diagrama representa el flujo de operaciones desde la perspectiva del usuario:
+
+![Diagrama de flujo Staking Vault](https://github.com/Sulvank/staking-vault/blob/main/diagrams/staking_vault_flow.png)
+
+---
+
 ## ✨ Funcionalidades
 
 ### 🏦 Tokens de Recibo (`StakingReceiptToken`)
