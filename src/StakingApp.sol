@@ -39,7 +39,7 @@ contract StakingApp is Ownable {
         uint256 rewardPerPeriod_,
         uint256 earlyWithdrawalPenalty_
     ) Ownable(owner_) {
-        require(earlyWithdrawalPenalty_ <= 10000, "Penalty cannot exceed 100%");
+        require(earlyWithdrawalPenalty_ <= fixedStackingAmount, "Penalty cannot exceed 100%");
         
         stakingToken = stakingToken_;
         stakingPeriod = stakingPeriod_;
@@ -72,7 +72,7 @@ contract StakingApp is Ownable {
         uint256 withdrawAmount = userBalance_;
         
         if (block.timestamp < elapsePeriod[msg.sender] + stakingPeriod) {
-            uint256 penalty = (userBalance_ * earlyWithdrawalPenalty) / 10000;
+            uint256 penalty = (userBalance_ * earlyWithdrawalPenalty) / fixedStackingAmount;
             withdrawAmount = userBalance_ - penalty;
             accumulatedFees += penalty;
             emit PenaltyApplied(msg.sender, penalty);
@@ -113,7 +113,7 @@ contract StakingApp is Ownable {
     }
     
     function updateEarlyWithdrawalPenalty(uint256 newPenalty_) external onlyOwner {
-        require(newPenalty_ <= 10000, "Penalty cannot exceed 100%");
+        require(newPenalty_ <= fixedStackingAmount, "Penalty cannot exceed 100%");
         earlyWithdrawalPenalty = newPenalty_;
         emit PenaltyUpdated(newPenalty_);
     }
