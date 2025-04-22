@@ -1,177 +1,127 @@
-# **StakingApp - Fixed Amount ERC20 Staking with ETH Rewards**
+# 🔐 Staking Vault - ERC20 Token Vault with Receipt Tokens and Early Withdrawal Penalties
 
-## **📝 Overview**
+## 📝 Overview
 
-**StakingApp** es un contrato inteligente que permite a los usuarios hacer staking de una cantidad fija de tokens ERC20 a cambio de recompensas en ETH, entregadas tras un periodo definido. Está diseñado para aceptar solo un depósito por usuario y asegurar transparencia en el reparto de recompensas.
+**Staking Vault** es un contrato inteligente basado en ERC20 que permite a los usuarios depositar tokens para staking y recibir tokens de recibo (`StakingReceiptToken`) que representan su participación. El contrato incorpora penalizaciones por retiro anticipado, redistribuyendo las penalizaciones entre los stakers activos.
 
-> [!NOTE]\
-> Construido usando contratos de OpenZeppelin para mejorar la seguridad y extensibilidad.
+> [!NOTE]
+> Este contrato sigue el estándar ERC20 de OpenZeppelin para garantizar seguridad e interoperabilidad.
 
-### **🔹 Características Principales:**
-
-- ✅ **Cantidad fija de staking por usuario**.
-- ✅ **Periodo de bloqueo configurado** y automáticamente gestionado.
-- ✅ **Recompensas en ETH** tras finalizar el periodo de staking.
-- ✅ **Parámetros controlados por el propietario**.
-- ✅ **Depósito único por usuario** para mayor simplicidad y seguridad.
+### 🔹 Características Principales:
+- ✅ **Tokens de recibo (`StakingReceiptToken`)** emitidos al depositar tokens para staking.
+- ✅ **Penalización por retiro anticipado** configurable.
+- ✅ **Redistribución de penalizaciones** entre los stakers activos.
+- ✅ **Pausado de operaciones** en situaciones de emergencia.
 
 ---
 
-## **✨ Funcionalidades**
+## ✨ Funcionalidades
 
-### **📥 Depósito Fijo de Tokens**
+### 🏦 Tokens de Recibo (`StakingReceiptToken`)
+- Al depositar tokens para staking, se emiten `StakingReceiptToken` al usuario.
+- Los `StakingReceiptToken` representan la participación del usuario en el staking y son necesarios para retirar los tokens originales.
 
-- Los usuarios solo pueden depositar la cantidad predeterminada.
-- No se permiten múltiples depósitos por usuario simultáneamente.
+### ⏳ Penalización por Retiro Anticipado
+- Si un usuario retira sus tokens antes del período mínimo de staking, se aplica una penalización (por ejemplo, 5% del monto retirado).
+- El monto penalizado se redistribuye entre los stakers activos proporcionalmente a su participación.
 
-### **⏱️ Bloqueo Temporal**
+### 🔄 Redistribución de Penalizaciones
+- Las penalizaciones acumuladas se distribuyen entre los stakers activos.
+- La distribución se realiza proporcionalmente a la cantidad de `StakingReceiptToken` que posee cada staker.
 
-- Las recompensas están bloqueadas durante un tiempo definido.
-- Solo se pueden reclamar recompensas tras finalizar el periodo.
+### 🚫 Pausado de Operaciones
+- El propietario del contrato puede pausar y reanudar las operaciones de staking y retiro en situaciones de emergencia.
 
-### **💸 Recompensas en ETH**
-
-- Los usuarios reciben recompensas en ETH, no en el token depositado.
-- El contrato debe ser previamente financiado por el propietario.
-
-### **👨‍✈️ Controles de Administración**
-
-- El propietario puede modificar el tiempo de staking.
-- Solo el propietario puede depositar ETH en el contrato.
-
-> [!IMPORTANT]\
-> Este contrato sigue el patrón Checks-Effects-Interactions (CEI) para prevenir ataques de reentrancia.
+> [!IMPORTANT]
+> El propietario del contrato tiene privilegios administrativos para gestionar las penalizaciones, pausar operaciones y distribuir recompensas.
 
 ---
 
-## **📖 Resumen del Contrato**
+## 📖 Resumen del Contrato
 
-### **Variables Clave**
+### Funciones Principales
 
-| Variable              | Descripción                                      |
-| --------------------- | ------------------------------------------------ |
-| `stakingToken`        | Dirección del token ERC20 aceptado para staking. |
-| `stakingPeriod`       | Tiempo de bloqueo en segundos.                   |
-| `fixedStackingAmount` | Cantidad fija que cada usuario debe depositar.   |
-| `rewardPerPeriod`     | Recompensa en ETH por periodo de staking.        |
-| `userBalance`         | Registro de tokens depositados por cada usuario. |
-| `elapsePeriod`        | Timestamp del último depósito de cada usuario.   |
-
-### **Funciones Clave**
-
-| 🔧 Nombre de la Funcíon        | 📋 Descripción                                                     |
-| ------------------------------ | ------------------------------------------------------------------ |
-| `depositTokens(uint256)`       | Deposita tokens (solo si el usuario no ha depositado antes).       |
-| `withdrawTokens()`             | Permite retirar los tokens en cualquier momento.                   |
-| `claimRewards()`               | Reclama recompensas en ETH si el periodo de staking ha finalizado. |
-| `changeStakingPeriod(uint256)` | Solo admin: Actualiza el tiempo de bloqueo requerido.              |
-| `receive()`                    | Solo admin: Permite al contrato recibir ETH.                       |
+| 🔧 Nombre de la Función             | 📋 Descripción                                                                 |
+|------------------------------------|-------------------------------------------------------------------------------|
+| `depositTokens(uint256 amount)`    | Deposita una cantidad fija de tokens y emite `StakingReceiptToken`.         |
+| `withdrawTokens()`                 | Retira tokens del staking, aplica penalización si es antes del tiempo mínimo. |
+| `distributeFees()`                 | Distribuye las penalizaciones acumuladas entre los stakers activos.          |
+| `claimRewards()`                   | Permite reclamar recompensas si ha pasado el período de staking.            |
+| `pause()`                          | Pausa todas las operaciones del contrato (solo propietario).                 |
+| `unpause()`                        | Reanuda las operaciones del contrato (solo propietario).                     |
+| `changeStakingPeriod(uint256)`     | Cambia el período de staking (solo propietario).                             |
+| `updateEarlyWithdrawalPenalty(uint256)` | Cambia la penalización por retiro anticipado (solo propietario).     |
 
 ---
 
-## **⚙️ Prerrequisitos**
+## ⚙️ Requisitos Previos
 
-### **🛠️ Herramientas Requeridas:**
+### 🛠️ Herramientas Necesarias:
+- 🖥️ **Remix IDE**: Para desplegar e interactuar con el contrato ([Remix IDE](https://remix.ethereum.org)).
+- **Metamask Wallet**: Para interactuar con la blockchain.
 
-- **Foundry**: Para compilar y testear el contrato ([Foundry Docs](https://book.getfoundry.sh)).
-- **Metamask**: Para interactuar con el contrato desplegado.
+### 🌐 Entorno:
+- Versión del compilador Solidity: `0.8.x`.
+- Red: Blockchain local (JavaScript VM) o testnets como Goerli.
 
-### **🌐 Entorno:**
-
-- Versión de Solidity: `0.8.28`
-- Compatible con blockchains locales y testnets de Ethereum.
-
-> [!TIP]\
-> Usa `forge test` para ejecutar las pruebas unitarias localmente.
+> [!TIP]
+> Siempre prueba tu contrato en una testnet antes de desplegarlo en la mainnet.
 
 ---
 
-## **🚀 Cómo Usar el Contrato**
+## 🚀 Cómo Usar el Contrato
 
-### **1️⃣ Despliegue**
+### 1️⃣ Desplegar el Contrato
 
-```bash
-git clone https://github.com/your-username/staking-app.git
-cd staking-app
-forge install
-forge build
-```
+1. Abre [Remix IDE](https://remix.ethereum.org).
+2. Crea un nuevo archivo llamado `StakingApp.sol` y otro para `StakingReceiptToken.sol`. Copia el código del contrato.
+3. Navega a la pestaña **Solidity Compiler**:
+   - Selecciona la versión del compilador `0.8.x`.
+   - Haz clic en **✅ Compile StakingApp.sol**.
+4. Ve a la pestaña **🛠️ Deploy & Run Transactions**:
+   - Selecciona **Environment** como `Injected Web3` si usas MetaMask.
+   - Despliega el contrato haciendo clic en **🚀 Deploy**.
 
-**Parámetros Requeridos:**
+### 2️⃣ Usar el Contrato en Remix
 
-- `stakingToken`: Dirección del token ERC20.
-- `owner`: Dirección del administrador.
-- `stakingPeriod`: Duración del staking en segundos.
-- `fixedStakingAmount`: Cantidad fija de tokens.
-- `rewardPerPeriod`: Recompensa en ETH por usuario.
+#### 💰 A. Depositar Tokens para Staking
+1. Llama a `depositTokens(uint256 amount)`.
+2. Se emitirán `StakingReceiptToken` equivalentes a la cantidad depositada.
 
-### **2️⃣ Interacción**
+#### 🔓 B. Retirar Tokens del Staking
+1. Llama a `withdrawTokens()`.
+2. Si el retiro es antes del tiempo mínimo, se aplicará una penalización.
 
-#### **📥 A. Depositar Tokens**
+#### 🏱 C. Reclamar Recompensas
+1. Llama a `claimRewards()` una vez finalizado el tiempo de staking.
 
-```solidity
-stakingApp.depositTokens(10); // Debe coincidir con fixedStackingAmount
-```
+#### ❌ D. Pausar y Reanudar Operaciones
+1. Llama a `pause()` para detener todas las operaciones.
+2. Llama a `unpause()` para reanudar las operaciones.
 
-- El usuario debe haber aprobado previamente el contrato para gastar sus tokens.
-
-#### **📤 B. Retirar Tokens**
-
-```solidity
-stakingApp.withdrawTokens();
-```
-
-- Retira los tokens depositados y resetea el estado del usuario.
-
-#### **🎁 C. Reclamar Recompensas**
-
-```solidity
-stakingApp.claimRewards();
-```
-
-- Solo se puede llamar tras finalizar el periodo de bloqueo.
-
-#### **🛠️ D. Funciones de Administrador**
-
-```solidity
-stakingApp.changeStakingPeriod(newPeriod);
-
-// Enviar ETH al contrato para recompensas
-(bool success, ) = address(stakingApp).call{value: 100 ether}("");
-```
-
-> [!WARNING]\
-> Si el contrato no tiene ETH suficiente, la función `claimRewards` revertirá con "Transfer failed."
+> [!WARNING]
+> Solo el propietario del contrato puede pausar operaciones y gestionar las penalizaciones.
 
 ---
 
-## **🧪 Cobertura de Tests**
+## 🛠️ Extensiones del Contrato
 
-### **✅ StakingTokenTest**
+### 🔍 Posibles Mejoras
+- 📈 **Integración con Oráculos**: Para ajustar dinámicamente las penalizaciones según condiciones del mercado.
+- ⛏️ **Mecanismo de Recompensas**: Implementar recompensas adicionales para los stakers a largo plazo.
+- 📊 **Gobernanza DAO**: Permitir votaciones comunitarias sobre parámetros del contrato.
+- 🔗 **Puente Cross-Chain**: Habilitar transferencias de tokens entre diferentes blockchains.
 
-- Mint de tokens correctamente para usuarios.
-
-### **✅ StakingAppTest**
-
-- Despliegue correcto de contratos.
-- Restricciones para funciones de administrador.
-- Depósitos de ETH y actualización de balances.
-- Depósito de tokens y verificación de unicidad.
-- Retiro de tokens y actualización de estados.
-- Lógica de recompensas con control de tiempo.
-- Validación de condiciones incorrectas: sin depósito, retiro anticipado, falta de ETH.
-
-```bash
-forge test -vv
-```
+> [!CAUTION]
+> Asegúrate de realizar pruebas y auditorías exhaustivas antes de agregar nuevas funcionalidades a un contrato en producción.
 
 ---
 
-## **📜 Licencia**
+## 📜 Licencia
 
-Este proyecto está licenciado bajo la licencia MIT.
+Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
 
 ---
 
-### 🚀 **StakingApp — Stake ERC20. Earn ETH. Securely.**
+### 🚀 **Staking Vault: Optimiza tus inversiones con seguridad y eficiencia.**
 
