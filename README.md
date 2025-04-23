@@ -2,126 +2,126 @@
 
 ## 📝 Overview
 
-**Staking Vault** es un contrato inteligente basado en ERC20 que permite a los usuarios depositar tokens para staking y recibir tokens de recibo (`StakingReceiptToken`) que representan su participación. El contrato incorpora penalizaciones por retiro anticipado, redistribuyendo las penalizaciones entre los stakers activos.
+**Staking Vault** is a smart contract based on ERC20 that allows users to deposit tokens for staking and receive receipt tokens (`StakingReceiptToken`) that represent their participation. The contract includes early withdrawal penalties and redistributes the penalties among active stakers.
 
 > [!NOTE]
-> Este contrato sigue el estándar ERC20 de OpenZeppelin para garantizar seguridad e interoperabilidad.
+> This contract follows the OpenZeppelin ERC20 standard to ensure security and interoperability.
 
-### 🔹 Características Principales:
-- ✅ **Tokens de recibo (`StakingReceiptToken`)** emitidos al depositar tokens para staking.
-- ✅ **Penalización por retiro anticipado** configurable.
-- ✅ **Redistribución de penalizaciones** entre los stakers activos.
-- ✅ **Pausado de operaciones** en situaciones de emergencia.
-
----
-
-## 🖉 Diagrama de Flujo del Contrato
-
-Este diagrama representa el flujo de operaciones desde la perspectiva del usuario:
-
-![Diagrama de flujo Staking Vault](https://github.com/Sulvank/staking-vault/blob/main/diagrams/staking_vault_flow.png)
+### 🔹 Main Features:
+- ✅ **Receipt tokens (`StakingReceiptToken`)** issued when depositing tokens for staking.
+- ✅ **Configurable early withdrawal penalty.**
+- ✅ **Penalty redistribution** among active stakers.
+- ✅ **Pause functionality** for emergencies.
 
 ---
 
-## ✨ Funcionalidades
+## 🖉 Contract Flow Diagram
 
-### 🏦 Tokens de Recibo (`StakingReceiptToken`)
-- Al depositar tokens para staking, se emiten `StakingReceiptToken` al usuario.
-- Los `StakingReceiptToken` representan la participación del usuario en el staking y son necesarios para retirar los tokens originales.
+This diagram represents the flow of operations from the user's perspective:
 
-### ⏳ Penalización por Retiro Anticipado
-- Si un usuario retira sus tokens antes del período mínimo de staking, se aplica una penalización (por ejemplo, 5% del monto retirado).
-- El monto penalizado se redistribuye entre los stakers activos proporcionalmente a su participación.
+![Staking Vault Flow Diagram](https://github.com/Sulvank/staking-vault/blob/main/diagrams/staking_vault_flow.png)
 
-### 🔄 Redistribución de Penalizaciones
-- Las penalizaciones acumuladas se distribuyen entre los stakers activos.
-- La distribución se realiza proporcionalmente a la cantidad de `StakingReceiptToken` que posee cada staker.
+---
 
-### 🚫 Pausado de Operaciones
-- El propietario del contrato puede pausar y reanudar las operaciones de staking y retiro en situaciones de emergencia.
+## ✨ Features
+
+### 🏦 Receipt Tokens (`StakingReceiptToken`)
+- When depositing tokens, the user receives `StakingReceiptToken`.
+- `StakingReceiptToken` represent the user's staking position and are required to withdraw the original tokens.
+
+### ⏳ Early Withdrawal Penalty
+- If a user withdraws before the minimum staking period, a penalty is applied (e.g., 5%).
+- The penalized amount is redistributed among the active stakers proportionally.
+
+### 🔄 Penalty Redistribution
+- Accumulated penalties are distributed among the active stakers.
+- Distribution is based on the amount of `StakingReceiptToken` each staker holds.
+
+### 🚫 Pause Functionality
+- The contract owner can pause and resume staking and withdrawal operations in emergencies.
 
 > [!IMPORTANT]
-> El propietario del contrato tiene privilegios administrativos para gestionar las penalizaciones, pausar operaciones y distribuir recompensas.
+> The contract owner has admin privileges to manage penalties, pause operations, and distribute rewards.
 
 ---
 
-## 📖 Resumen del Contrato
+## 📖 Contract Summary
 
-### Funciones Principales
+### Main Functions
 
-| 🔧 Nombre de la Función             | 📋 Descripción                                                                 |
-|------------------------------------|-------------------------------------------------------------------------------|
-| `depositTokens(uint256 amount)`    | Deposita una cantidad fija de tokens y emite `StakingReceiptToken`.         |
-| `withdrawTokens()`                 | Retira tokens del staking, aplica penalización si es antes del tiempo mínimo. |
-| `distributeFees()`                 | Distribuye las penalizaciones acumuladas entre los stakers activos.          |
-| `claimRewards()`                   | Permite reclamar recompensas si ha pasado el período de staking.            |
-| `pause()`                          | Pausa todas las operaciones del contrato (solo propietario).                 |
-| `unpause()`                        | Reanuda las operaciones del contrato (solo propietario).                     |
-| `changeStakingPeriod(uint256)`     | Cambia el período de staking (solo propietario).                             |
-| `updateEarlyWithdrawalPenalty(uint256)` | Cambia la penalización por retiro anticipado (solo propietario).     |
+| 🔧 Function Name                    | 📋 Description                                                                |
+|------------------------------------|--------------------------------------------------------------------------------|
+| `depositTokens(uint256 amount)`    | Deposits a fixed amount of tokens and issues `StakingReceiptToken`.          |
+| `withdrawTokens()`                 | Withdraws tokens; applies a penalty if done before the staking period ends.  |
+| `distributeFees()`                 | Distributes accumulated penalties among active stakers.                       |
+| `claimRewards()`                   | Allows claiming ETH rewards after the staking period has passed.             |
+| `pause()`                          | Pauses all contract operations (owner only).                                  |
+| `unpause()`                        | Resumes operations (owner only).                                              |
+| `changeStakingPeriod(uint256)`     | Updates the staking duration (owner only).                                    |
+| `updateEarlyWithdrawalPenalty(uint256)` | Updates early withdrawal penalty (owner only).                          |
 
 ---
 
-## ⚙️ Requisitos Previos
+## ⚙️ Prerequisites
 
-### 🛠️ Herramientas Necesarias:
-- **Foundry**: Para testear contratos localmente ([Instrucciones de instalación](https://book.getfoundry.sh/getting-started/installation)).
-- **Node.js + npm** (si vas a integrar con frontend).
-- **MetaMask** (opcional, para pruebas manuales).
+### 🛠️ Required Tools:
+- **Foundry**: To test contracts locally ([Installation Guide](https://book.getfoundry.sh/getting-started/installation)).
+- **Node.js + npm** (if integrating with frontend).
+- **MetaMask** (optional, for manual testing).
 
-### 🌐 Entorno:
-- Versión del compilador Solidity: `0.8.x`.
-- Red recomendada: local (Anvil), Goerli, Sepolia.
+### 🌐 Environment:
+- Solidity compiler version: `0.8.x`
+- Recommended networks: local (Anvil), Goerli, Sepolia.
 
 > [!TIP]
-> Usa `forge test` para correr los tests unitarios y validar el contrato antes de desplegarlo.
+> Use `forge test` to run unit tests and validate the contract before deployment.
 
 ---
 
-## 🚀 Cómo Usar el Contrato Localmente
+## 🚀 How to Use the Contract Locally
 
-### 1️⃣ Clonar y Configurar
+### 1️⃣ Clone and Set Up
 
 ```bash
-git clone https://github.com/tuusuario/staking-vault.git
+git clone https://github.com/youruser/staking-vault.git
 cd staking-vault
 ```
 
-### 2️⃣ Instalar Foundry (si no lo tienes)
+### 2️⃣ Install Foundry (if you haven’t)
 
 ```bash
 curl -L https://foundry.paradigm.xyz | bash
 foundryup
 ```
 
-### 3️⃣ Ejecutar Tests
+### 3️⃣ Run the Tests
 
 ```bash
 forge test -vv
 ```
 
-Esto correrá todos los tests del contrato `StakingApp` y mostrará resultados detallados.
+This will execute all tests for the `StakingApp` contract and display detailed output.
 
 ---
 
-## 🛠️ Extensiones del Contrato
+## 🛠️ Contract Extensions
 
-### 🔍 Posibles Mejoras
-- 📈 **Integración con Oráculos**: Para ajustar dinámicamente las penalizaciones según condiciones del mercado.
-- ⛏️ **Mecanismo de Recompensas**: Implementar recompensas adicionales para los stakers a largo plazo.
-- 📊 **Gobernanza DAO**: Permitir votaciones comunitarias sobre parámetros del contrato.
-- 🔗 **Puente Cross-Chain**: Habilitar transferencias de tokens entre diferentes blockchains.
+### 🔍 Possible Enhancements
+- 📈 **Oracle Integration**: Dynamically adjust penalties based on market conditions.
+- ⛏️ **Reward Mechanism**: Add extra rewards for long-term stakers.
+- 📊 **DAO Governance**: Enable community voting on contract parameters.
+- 🔗 **Cross-Chain Bridge**: Allow token transfer between different blockchains.
 
 > [!CAUTION]
-> Asegúrate de realizar pruebas y auditorías exhaustivas antes de agregar nuevas funcionalidades a un contrato en producción.
+> Ensure thorough testing and audits before adding new features to a production contract.
 
 ---
 
-## 📜 Licencia
+## 📜 License
 
-Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
 
-### 🚀 **Staking Vault: Optimiza tus inversiones con seguridad y eficiencia.**
+### 🚀 **Staking Vault: Optimize your investments with security and efficiency.**
 
