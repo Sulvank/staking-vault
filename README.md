@@ -65,50 +65,42 @@ Este diagrama representa el flujo de operaciones desde la perspectiva del usuari
 ## ⚙️ Requisitos Previos
 
 ### 🛠️ Herramientas Necesarias:
-- 🖥️ **Remix IDE**: Para desplegar e interactuar con el contrato ([Remix IDE](https://remix.ethereum.org)).
-- **Metamask Wallet**: Para interactuar con la blockchain.
+- **Foundry**: Para testear contratos localmente ([Instrucciones de instalación](https://book.getfoundry.sh/getting-started/installation)).
+- **Node.js + npm** (si vas a integrar con frontend).
+- **MetaMask** (opcional, para pruebas manuales).
 
 ### 🌐 Entorno:
 - Versión del compilador Solidity: `0.8.x`.
-- Red: Blockchain local (JavaScript VM) o testnets como Goerli.
+- Red recomendada: local (Anvil), Goerli, Sepolia.
 
 > [!TIP]
-> Siempre prueba tu contrato en una testnet antes de desplegarlo en la mainnet.
+> Usa `forge test` para correr los tests unitarios y validar el contrato antes de desplegarlo.
 
 ---
 
-## 🚀 Cómo Usar el Contrato
+## 🚀 Cómo Usar el Contrato Localmente
 
-### 1️⃣ Desplegar el Contrato
+### 1️⃣ Clonar y Configurar
 
-1. Abre [Remix IDE](https://remix.ethereum.org).
-2. Crea un nuevo archivo llamado `StakingApp.sol` y otro para `StakingReceiptToken.sol`. Copia el código del contrato.
-3. Navega a la pestaña **Solidity Compiler**:
-   - Selecciona la versión del compilador `0.8.x`.
-   - Haz clic en **✅ Compile StakingApp.sol**.
-4. Ve a la pestaña **🛠️ Deploy & Run Transactions**:
-   - Selecciona **Environment** como `Injected Web3` si usas MetaMask.
-   - Despliega el contrato haciendo clic en **🚀 Deploy**.
+```bash
+git clone https://github.com/tuusuario/staking-vault.git
+cd staking-vault
+```
 
-### 2️⃣ Usar el Contrato en Remix
+### 2️⃣ Instalar Foundry (si no lo tienes)
 
-#### 💰 A. Depositar Tokens para Staking
-1. Llama a `depositTokens(uint256 amount)`.
-2. Se emitirán `StakingReceiptToken` equivalentes a la cantidad depositada.
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
+```
 
-#### 🔓 B. Retirar Tokens del Staking
-1. Llama a `withdrawTokens()`.
-2. Si el retiro es antes del tiempo mínimo, se aplicará una penalización.
+### 3️⃣ Ejecutar Tests
 
-#### 🏱 C. Reclamar Recompensas
-1. Llama a `claimRewards()` una vez finalizado el tiempo de staking.
+```bash
+forge test -vv
+```
 
-#### ❌ D. Pausar y Reanudar Operaciones
-1. Llama a `pause()` para detener todas las operaciones.
-2. Llama a `unpause()` para reanudar las operaciones.
-
-> [!WARNING]
-> Solo el propietario del contrato puede pausar operaciones y gestionar las penalizaciones.
+Esto correrá todos los tests del contrato `StakingApp` y mostrará resultados detallados.
 
 ---
 
